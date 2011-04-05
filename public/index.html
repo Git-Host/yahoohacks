@@ -6,43 +6,32 @@
     </head>
     <body style="overflow:hidden">
 
-      <canvas id="projector" width="100" height="1%">Your browser does not support the Canvas element.</canvas>
-      <div id="debug"></div>
+      <canvas id="projector" width="100" height="100%">Your browser does not support the Canvas element.</canvas>
 
-		
 		<script type="text/javascript">
 			
-			var VELOCITY = 1;
-			var PARTICLES = 400;
-			
-			var mouse = {x:0, y:0};
-			var particles = [];
-			var colors = [ "#000000","#FF0000","#FFFF00" ];
 			var canvas = document.getElementById('projector');
+			var particle;
       var context;
-      var accelx;
-      var accely;
+      var accelx = 0;
+      var accely = 0;
 			
 			if (canvas && canvas.getContext) {
 				context = canvas.getContext('2d');
 				
-        for( var i = 0; i < PARTICLES; i++ ) {
-					particles.push( { 
+				particle = ( { 
 						x: window.innerWidth/2, 
 						y: window.innerHeight/2, 
 						vx: 0,
 						vy: 0,
 						size: 15,
-						color: colors[ Math.floor( Math.random() * colors.length ) ]
-					} );
-				}
+						color: "#000000" 
+				} );
 				
 				Initialize();
 			}
 			
 			function Initialize() {
-				//canvas.addEventListener('mousemove', MouseMove, false);
-				//window.addEventListener('mousedown', MouseDown, false);
         window.addEventListener("MozOrientation", handleOrientation, true);
 				window.addEventListener('resize', ResizeCanvas, false);
 				setInterval( TimeUpdate, 40 );
@@ -60,17 +49,9 @@
 				
 				context.clearRect(0, 0, window.innerWidth, window.innerHeight);
 				
-				var particle = particles[0];
-				
 			  particle.x += particle.vx;
         particle.y += particle.vy;
 
-        b = document.getElementById("debug");
-        b.innerHTML = 
-                "<p> x = " + particle.x + "</p>" +
-                "<p> y = " + particle.y + "</p>";
-
-						
         if (particle.x > window.innerWidth || particle.x < 0) {
 				  particle.vx = 0;
 				}
