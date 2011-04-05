@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>MozOrientation Event</title>
+<script>
+var count = 0;
+
+function handleOrientation(orientData) { 
+  //count++;
+  //var b = document.body;
+
+  /*b.innerHTML = "<p> count = " + count +  "</p>" +
+                "<p> x = " + orientData.x + "</p>" +
+                "<p> y = " + orientData.y + "</p>" +
+                "<p> z = " + orientData.z + "</p>";*/
+ 				context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        
+        accelx = orientData.x;
+        accely = orientData.y;
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+/*
+        b = document.getElementById("debug");
+        b.innerHTML = 
+                "<p> x = " + orientData.x + "</p>" +
+                "<p> y = " + orientData.y + "</p>";
+*/
+						
+        if (particle.x > window.innerWidth || particle.x < 0) {
+			  	particle.vx = 0;
+				} else {
+				  particle.vx *= 1 + accelx;
+				}
+						
+        if (particle.y > window.innerHeight || particle.y < 0) {
+				  particle.vy = 0;
+			  } 
+			  else {
+				  particle.vy *= 1 + accely;
+				}
+			  particle.currentSize = 15;
+					
+			  context.fillStyle = particle.color;
+			  context.beginPath();
+			  context.arc(particle.x,particle.y,particle.currentSize,0,Math.PI*2,true);
+			  context.closePath();
+			  context.fill(); 
+}
+
+window.addEventListener("MozOrientation", handleOrientation, true);
+
+var canvas = document.getElementById('projector');
+var context;
+			
+if (canvas && canvas.getContext) {
+  context = canvas.getContext('2d');
+  var particle = ( { 
+						x: window.innerWidth/2, 
+						y: window.innerHeight/2, 
+						vx: 0,
+						vy: 0,
+						size: 15,
+            color: "#000000"} );
+}
+
+
+</script> 
+</head>
+<body>
+  <canvas id="projector" width="100" height="100%">Your browser does not support the Canvas element.</canvas>
+</body>
+</html>
+
