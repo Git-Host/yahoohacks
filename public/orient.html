@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Orientation Test</title>
+<style type="text/css"> 
+  body {
+    font-family: courier new; 
+    font-size: 20pt; 
+    color: 00000; 
+  } 
+</style> 
+<script>
+var count = 0;
+
+function displayOrientation(orientData, type){
+    count++;
+    var x = Math.round(orientData.x);
+    var y = Math.round(orientData.y);
+    var z = orientData.z;
+
+
+    document.getElementById('type').innerHTML = "type:" + type;
+    document.getElementById('count').innerHTML = "count: " + count;
+    document.getElementById('x').innerHTML= "x: " + x;
+    document.getElementById('y').innerHTML= "y: " + y;
+    document.getElementById('z').innerHTML= "z: " + z;
+}
+
+window.addEventListener("MozOrientation", function(orientData){
+
+    var obj = [];
+    obj.x = orientData.x * 90;
+    obj.y = orientData.y * 90;
+    obj.z = orientData.z;
+
+    displayOrientation(obj,"MozOrientation");
+
+}, true);
+
+window.addEventListener("deviceorientation", function(orientData) {
+
+    var obj = [];
+    obj.x = orientData.gamma;
+    obj.y = orientData.beta;
+    obj.z = orientData.alpha;
+
+    displayOrientation(obj,"deviceorientation");
+
+}, true);
+
+</script> 
+</head>
+<body>
+  <div id=type></div>
+  <div id=count></div>
+  <div id=x></div>
+  <div id=y></div>
+  <div id=z></div>
+</body>
+</html>
+
