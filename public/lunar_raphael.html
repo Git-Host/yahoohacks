@@ -43,6 +43,7 @@
     // Start code
     resetEnv(); 
     window.addEventListener("MozOrientation", handleOrientation, true);
+    window.addEventListener("deviceorientation", deviceOrientation, true);
     setInterval( Update, 20 );
 
     function resetEnv() {
@@ -146,7 +147,13 @@
       accelx = orientData.x;
       accely = orientData.y;
     }
+
       
+    function deviceOrientation(orientData) { 
+      accelx = orientData.gamma/90;
+      accely = orientData.beta/90;
+    }
+
     function Update(e) {
       
       //context.fillText(parseInt(ship.x) + ", " + parseInt(ship.y), 10, 10);
