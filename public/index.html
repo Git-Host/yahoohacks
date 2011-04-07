@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
+  <head>
+        <script src="raphael.js"></script>  
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Yay!</title>
     </head>
@@ -17,6 +18,7 @@
       // https://developer.mozilla.org/en/DOM/MozOrientation
       // http://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/
       var canvas = document.getElementById('projector');
+      var pad;
       var dot;
       var context;
       var accelx = 0;
@@ -26,18 +28,38 @@
       var collisiondots = []; 
       var animate = [];
       var score = 0;
+      var r;
+      var path1 = "M" + window.innerWidth/2 + "," + window.innerHeight/2 + "c0-20 40,20 40,0c0-20 -40,20 -40,0z";
+
       if (canvas && canvas.getContext) {
         context = canvas.getContext('2d');
+        pad = Raphael(document.getElementById('projector'));
+         
         
         dot = ( { 
             x: window.innerWidth/2, 
             y: window.innerHeight/2, 
+            /*
+            tipx: 0,
+            tipy: 0,
+            footx1: 0,
+            footy1: 0,
+            footx2: 0,
+            footy2: 0,
+            */
             vx: 0,
             vy: 0,
             size: 8,
             color: "#FFFFFF" 
             } );
-
+/*
+        dot.tipx = dot.x;
+        dot.tipy = dot.y + 8;
+        dot.footx1 = dot.x - 8;
+        dot.footy1 = dot.y - 8;
+        dot.footx2 = dot.x + 8;
+        dot.footy2 = dot.y - 8;
+*/
         for (var i = 0; i < 75; i++) {
           collisiondots.push({x: Math.random()* window.innerWidth, 
                               y: Math.random() * window.innerHeight});
@@ -62,13 +84,21 @@
         accely = orientData.y;
     }
         
-      function TimeUpdate(e) {
-        
+function TimeUpdate(e) {
+
         context.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        
+     
         // Update velocity and position
         dot.x += dot.vx;
         dot.y += dot.vy;
+/*
+        dot.tipx += dot.vx;
+        dot.tipy += dot.vy;
+        dot.footx1 += dot.vx;
+        dot.footy1 += dot.vy;
+        dot.footx2 += dot.vx;
+        dot.footy2 += dot.vy;
+*/
 
         if (dot.x > window.innerWidth) {
           //dot.vx = 0;
@@ -182,16 +212,48 @@
           context.fill();
         }
 
+        /*
+        var m = (prev.y-dot.y)/(prev.x-dot.x);
+        var b = dot.y - m * dot.x;
+        var p1 = {x: 0, y:0};
+        var p2 = {x: 0, y:0};
+        var p3 = {x: 0, y:0};
+        var p4 = {x: 0, y:0};
+        var d = 5;
+
+        //p1.x = Math.sqrt(Math.pow(d, 2) - Math.pow(m*dot.x+b, 2));
+        p1.x = Math.sqrt(Math.abs(Math.pow(d, 2) - Math.pow(m*dot.x+b, 2)));
+        p1.y = m * p1.x + b;
+        p2.x = -p1.x;
+        p2.y = m * p2.x + b;
+
+        m = -m;
+
+        p3.x = Math.sqrt(Math.abs(Math.pow(d, 2) - Math.pow(m*p2.x+b, 2)));
+        p3.y = m * p3.x + b;
+        p4.x = -p3.x;
+        p4.y = m * p3.x + b;
+        */
+
         // Draw flying dot
         context.fillStyle = dot.color;
         context.beginPath();
         context.arc(dot.x,dot.y,dot.size,0,Math.PI*2,true);
+        /*
+        context.strokeStyle = "#ffffff";
+        context.lineWidth=14;
+        context.stroke();
+        context.moveTo(dot.tipx, dot.tipy);
+        context.lineTo(dot.footx1, dot.footy1);
+        context.lineTo(dot.footx2, dot.footy2);
+        */
         context.closePath();
         context.fill();
 
         // Draw score
         context.font = "bold 60px sans-serif";
         context.fillText(score, 30, 70);
+        var t = pad.path(path1).attr({"stroke":"#ffffff"});
             
             
       }

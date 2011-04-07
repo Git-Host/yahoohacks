@@ -11,6 +11,7 @@
   } 
 </style> 
 <script>
+// http://stackoverflow.com/questions/4840143/how-to-map-deviceorientation-to-mozorientation-values
 var count = 0;
 
 function displayOrientation(orientData, type){
@@ -27,6 +28,7 @@ function displayOrientation(orientData, type){
     document.getElementById('z').innerHTML= "z: " + z;
 }
 
+// https://developer.mozilla.org/en/DOM/MozOrientation
 window.addEventListener("MozOrientation", function(orientData){
 
     var obj = [];
@@ -36,8 +38,9 @@ window.addEventListener("MozOrientation", function(orientData){
 
     displayOrientation(obj,"MozOrientation");
 
-}, true);
+  }, true);
 
+// http://dev.w3.org/geo/api/spec-source-orientation
 window.addEventListener("deviceorientation", function(orientData) {
 
     var obj = [];
