@@ -34,9 +34,8 @@
     var ship_flame_obj;
     var accelx = 0;
     var accely = 0;
-    var particles = [];
-    var terrain_pts = [];
-    var terrain_obj = []; 
+    var terrain_pts;
+    var terrain_obj; 
     //var h = Math.random();
     var lz;
 
@@ -70,7 +69,16 @@
                  vy: 0,
                  size: 20,
                  color: "#FFFFFF" 
-                 } );
+               } );
+
+
+
+      drawTerrain();
+      ship_obj = null;
+      ship_flame_obj = null;
+    }
+
+    function drawShip() {
       ship.t_ptx = ship.x;
       ship.t_pty = ship.y - ship.size;
       ship.r_ptx = ship.x + ship.size/3*2;
@@ -81,35 +89,52 @@
       ship_path = "M" + ship.t_ptx + " " + ship.t_pty +
                   "L" + ship.r_ptx + " " + ship.r_pty + 
                   "L" + ship.l_ptx + " " + ship.l_pty + "Z";
-      ship_obj = paper.path(ship_path).attr({stroke:"#FFFFFF", fill:"#00FFFF", "stroke-width":6});
-
-
-      ship_flame_arr = []
-      ship.flame_l = ship.l_ptx - ship.size/2;
-      ship.flame_r = ship.r_ptx + ship.size/2;
-      ship.flame_width = ship.flame_r - ship.flame_l;
-      ship.flame_height= ship.size;
-      for (var i = 0; i < 5; i++) {
-        ship_flame_arr.push({x: Math.abs(Math.random())*ship.flame_width + ship.flame_l,
-                             y: Math.abs(Math.random())*ship.flame_height + ship.y*(3/2)});
+      if (ship_obj == null) {
+        ship_obj = paper.path(ship_path).attr({stroke:"#FFFFFF", fill:"#00FFFF", "stroke-width":6});
+      } else {
+        ship_obj.animate({path: ship_path}, 10);
       }
-      ship_flame_arr.sort(function(a,b){return a.x - b.x});
-      ship_flame_path = "M" + ship.l_ptx + " " + ship.l_pty +
-                        "L" + ship.flame_l + " " + ship_flame_arr[0].y +
-                        "L" + ship_flame_arr[1].x + " " + ship_flame_arr[1].y +
-                        "L" + ship_flame_arr[2].x + " " + ship_flame_arr[2].y +
-                        "L" + ship_flame_arr[3].x + " " + ship_flame_arr[3].y +
-                        "L" + ship.flame_r + " " + ship_flame_arr[4].y +
-                        "L" + ship.r_ptx + " " + ship.r_pty + "Z";
-      ship_flame_obj = paper.path(ship_flame_path).attr({stroke:"#FFFFFF", fill:"90-#FF3300-#FFFF33", "stroke-width":2});
 
+      if(accely < 0.1) {
+        ship_flame_arr = []
+        ship.flame_l = ship.l_ptx - ship.size/2;
+        ship.flame_r = ship.r_ptx + ship.size/2;
+        ship.flame_width = ship.flame_r - ship.flame_l;
+        ship.flame_height= ship.size;
+        for (var i = 0; i < 5; i++) {
+          ship_flame_arr.push({x: Math.abs(Math.random())*ship.flame_width + ship.flame_l,
+                               y: Math.abs(Math.random())*ship.flame_height + ship.y*(3/2)});
+        }
+        ship_flame_arr.sort(function(a,b){return a.x - b.x});
+        ship_flame_path = "M" + ship.l_ptx + " " + ship.l_pty +
+                          "L" + ship.flame_l + " " + ship_flame_arr[0].y +
+                          "L" + ship_flame_arr[1].x + " " + ship_flame_arr[1].y +
+                          "L" + ship_flame_arr[2].x + " " + ship_flame_arr[2].y +
+                          "L" + ship_flame_arr[3].x + " " + ship_flame_arr[3].y +
+                          "L" + ship.flame_r + " " + ship_flame_arr[4].y +
+                          "L" + ship.r_ptx + " " + ship.r_pty + "Z";
+      if (ship_flame_obj == null) {
+        ship_flame_obj = paper.path(ship_flame_path).attr({stroke:"#FFFFFF", fill:"90-#FF3300-#FFFF33", "stroke-width":2});
+      } else {
+        ship_flame_obj.animate({path: ship_flame_path}, 10);
+      }
+
+      }
+      else {
+        ship_flame_obj.remove();
+        ship_flame_obj = null;
+      }
+    }
+
+    function drawTerrain() {
+  
       // Generate terrain points
       for (var i = 0; i < PEAK_NUM; i++) {
         terrain_pts.push({x: Math.random()* MAX_WIDTH, 
                           y: MAX_HEIGHT - Math.abs(Math.random()) * 
                              MAX_HEIGHT*PEAK_SCALE});
-                              
       }
+
       // Generate endpoints
       terrain_pts.push({x: 0, 
                         y: MAX_HEIGHT - Math.random() * 
@@ -130,7 +155,6 @@
           terrain_pts[i].x += 70;
         }
       }
-
       //Draw terrain segs
       for (var i = 0; i < terrain_pts.length - 1; i++) {
         terrain_obj.push(paper.path("M" + terrain_pts[i].x + " " + 
@@ -139,7 +163,6 @@
       }
 
       terrain_obj[lz].attr({stroke:"#F52887"});
-
      
     }
 
@@ -230,45 +253,8 @@
       // Assign next ship velocity
       ship.x += ship.vx;
       ship.y += ship.vy;
-   
-      // Draw ship
-      ship.t_ptx = ship.x;
-      ship.t_pty = ship.y - ship.size;
-      ship.r_ptx = ship.x + ship.size/3*2;
-      ship.r_pty = ship.y + ship.size;
-      ship.l_ptx = ship.x - ship.size/3*2;
-      ship.l_pty = ship.y + ship.size;
 
-      ship_path = "M" + ship.t_ptx + " " + ship.t_pty +
-                  "L" + ship.r_ptx + " " + ship.r_pty + 
-                  "L" + ship.l_ptx + " " + ship.l_pty + "Z";
-      ship_obj.animate({path: ship_path}, 10);
-
-      ship_flame_obj.remove();
-
-      // Draw flame is up tilt
-      if(accely < 0.1) {
-      ship_flame_arr = []
-      ship.flame_l = ship.l_ptx - ship.size/2;
-      ship.flame_r = ship.r_ptx + ship.size/2;
-      ship.flame_width = ship.flame_r - ship.flame_l;
-      ship.flame_height= ship.size;
-      for (var i = 0; i < 5; i++) {
-        ship_flame_arr.push({x: Math.abs(Math.random())*ship.flame_width + ship.flame_l,
-                             y: Math.abs(Math.random())*ship.flame_height + ship.y*(3/2)});
-      }
-      ship_flame_arr.sort(function(a,b){return a.x - b.x});
-      ship_flame_path = "M" + ship.l_ptx + " " + ship.l_pty +
-                        "L" + ship.flame_l + " " + ship_flame_arr[0].y +
-                        "L" + ship_flame_arr[1].x + " " + ship_flame_arr[1].y +
-                        "L" + ship_flame_arr[2].x + " " + ship_flame_arr[2].y +
-                        "L" + ship_flame_arr[3].x + " " + ship_flame_arr[3].y +
-                        "L" + ship.flame_r + " " + ship_flame_arr[4].y +
-                        "L" + ship.r_ptx + " " + ship.r_pty + "Z";
-      ship_flame_obj = paper.path(ship_flame_path).attr({stroke:"#FFFFFF", fill:"90-#FF3300-#FFFF33", "stroke-width":2});
-      }
-      paper.print(10, 50, "hello", paper.getFont("Times"), 30).attr({fill: "#fff", stroke: "#ffffff"});
-
+      drawShip();
     }
 
 
